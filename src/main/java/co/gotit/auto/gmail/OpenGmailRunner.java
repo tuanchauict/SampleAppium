@@ -17,7 +17,7 @@ public class OpenGmailRunner extends BaseTestRunnerJava {
     }
 
     public void clickLoginEmail(){
-        String senderNameId = "com.google.android.gm:id/sender_name";
+        String senderNameId = "com.google.android.gm:xpath/sender_name";
         String senderName = "Account Kit";
 
     }

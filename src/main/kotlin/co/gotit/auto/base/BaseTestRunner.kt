@@ -3,14 +3,32 @@ package co.gotit.auto.base
 import io.appium.java_client.android.AndroidDriver
 import io.appium.java_client.service.local.AppiumDriverLocalService
 import io.appium.java_client.service.local.AppiumServiceBuilder
-import org.openqa.selenium.By
 import org.openqa.selenium.Platform
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.remote.DesiredCapabilities
+import org.openqa.selenium.support.ui.ExpectedConditions
+import org.openqa.selenium.support.ui.FluentWait
 import java.net.URL
 import java.util.concurrent.TimeUnit
 
-class BaseTestRunner(serverPort: Int, capabilities: DesiredCapabilities){
+
+sealed class By {
+    abstract fun get(): org.openqa.selenium.By
+}
+
+data class ById(val id: String) : By() {
+    override fun get() = org.openqa.selenium.By.id(id)
+}
+
+data class ByXPath(val xpath: String) : By() {
+    override fun get() = org.openqa.selenium.By.xpath(xpath)
+}
+
+data class ByText(val text: String) : By() {
+    override fun get() = org.openqa.selenium.By.xpath("//*[@text=text]")
+}
+
+class BaseTestRunner(serverPort: Int, capabilities: DesiredCapabilities) {
     companion object {
         private val APPIUM_SERVERS = HashMap<Int, AppiumDriverLocalService>()
 
@@ -25,7 +43,7 @@ class BaseTestRunner(serverPort: Int, capabilities: DesiredCapabilities){
             return server
         }
 
-        fun stopAppServer(port: Int){
+        fun stopAppServer(port: Int) {
             val server = APPIUM_SERVERS.remove(port)
             server?.stop()
         }
@@ -40,33 +58,26 @@ class BaseTestRunner(serverPort: Int, capabilities: DesiredCapabilities){
     }
 
 
-    fun findElementById(id: String): WebElement? {
-        return driver.findElement(By.id(id))
+    fun findElement(by: By): WebElement? {
+        return driver.findElement(by.get())
     }
 
-    fun findElementByXpath(xpath: String): WebElement? {
-        return driver.findElement(By.xpath(xpath))
+    fun findElements(by: By): List<out WebElement>? {
+        return driver.findElements(by.get())
     }
 
-    fun findElementByText(text: String): WebElement?{
-        return driver.findElement(By.xpath("//*[@text='$text']")) //need test
+    fun fluentWaitFor(by: By, timeOutSecond: Long = 60L, ignoring: Array<Class<Throwable>> = emptyArray()) {
+        val wait = FluentWait(driver)
+                .withTimeout(timeOutSecond, TimeUnit.SECONDS)
+                .pollingEvery(250L, TimeUnit.SECONDS)
+
+        for (t in ignoring){
+            wait.ignoring(t)
+        }
+        wait.until(ExpectedConditions.visibilityOfElementLocated(by.get()))
     }
 
-    fun findElementsById(id: String): List<out WebElement>? {
-        return driver.findElements(By.id(id))
-    }
 
-    fun findElementsByXpath(xpath: String): List<out WebElement>?{
-        return driver.findElements(By.xpath(xpath))
-    }
-
-    fun findElementsByText(text: String): List<out WebElement>?{
-        return driver.findElements(By.xpath("//*[@text='$text']"))//need test
-    }
-
-    fun waitFor(){
-
-    }
 }
 
 class CapabilitiesBuilder {
