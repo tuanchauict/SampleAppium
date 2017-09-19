@@ -14,7 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class BaseTestRunner {
+public class BaseTestRunnerJava {
     private static final Map<Integer, AppiumDriverLocalService> APPIUM_SERVERS = new HashMap<>();
 
     private int mServerPort;
@@ -24,7 +24,7 @@ public class BaseTestRunner {
 
 
 
-    public BaseTestRunner(int serverPort, DesiredCapabilities capabilities) throws MalformedURLException {
+    public BaseTestRunnerJava(int serverPort, DesiredCapabilities capabilities) throws MalformedURLException {
         mServerPort = serverPort;
 
         mAppiumServer = createAppServer(serverPort);

@@ -1,11 +1,11 @@
 package co.gotit.auto.gmail;
 
-import co.gotit.auto.base.BaseTestRunner;
+import co.gotit.auto.base.BaseTestRunnerJava;
 import io.appium.java_client.android.AndroidDriver;
 
 import java.net.MalformedURLException;
 
-public class OpenGmailRunner extends BaseTestRunner {
+public class OpenGmailRunner extends BaseTestRunnerJava {
 
 
     public OpenGmailRunner() throws MalformedURLException {
